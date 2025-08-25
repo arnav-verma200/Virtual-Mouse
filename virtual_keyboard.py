@@ -5,7 +5,7 @@ import time
 import string
 from pynput.keyboard import Controller, Key
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 keyboard = Controller()
 mphands = mp.solutions.hands
 hands = mphands.Hands(max_num_hands=1)
@@ -26,17 +26,17 @@ while True:
     
     coords = []
     frame = cv2.flip(frame, 1)
-    sf = 1
+    sf = 0.6
     h, w = frame.shape[:2]
     h2, w2 = int(h * sf), int(w * sf)
     frame = cv2.resize(frame, (w2, h2))
     #======================================================================================================================
     # Fixed layout: two rows for alphabet, third row for Space and Backspace
-    box_w = 70
-    box_h = 70
-    margin = 15
+    box_w = int(70 * sf)
+    box_h = int(70 * sf)
+    margin = int(15 * sf)
     start_x = margin
-    start_y = 130
+    start_y = int(130 * sf)
     letters_per_row = 13
     # First row: A-M
     for idx, letter in enumerate(letters[:letters_per_row]):
@@ -45,10 +45,10 @@ while True:
         x2 = x1 + box_w
         y2 = y1 + box_h
         cv2.rectangle(frame, (x1, y1), (x2, y2), (128,128,128), 2)  # grey border
-        text_size = cv2.getTextSize(letter, cv2.FONT_HERSHEY_SIMPLEX, 1.3, 2)[0]
+        text_size = cv2.getTextSize(letter, cv2.FONT_HERSHEY_SIMPLEX, 1.3 * sf, 2)[0]
         text_x = x1 + (box_w - text_size[0]) // 2
         text_y = y1 + (box_h + text_size[1]) // 2
-        cv2.putText(frame, letter, (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX, 1.3, (0,0,0), 2)  # black text
+        cv2.putText(frame, letter, (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX, 1.3 * sf, (0,0,0), 2)  # black text
         coords.append([letter, x1, y1, x2, y2])
     # Second row: N-Z
     for idx, letter in enumerate(letters[letters_per_row:letters_per_row*2]):
@@ -57,10 +57,10 @@ while True:
         x2 = x1 + box_w
         y2 = y1 + box_h
         cv2.rectangle(frame, (x1, y1), (x2, y2), (128,128,128), 2)
-        text_size = cv2.getTextSize(letter, cv2.FONT_HERSHEY_SIMPLEX, 1.3, 2)[0]
+        text_size = cv2.getTextSize(letter, cv2.FONT_HERSHEY_SIMPLEX, 1.3 * sf, 2)[0]
         text_x = x1 + (box_w - text_size[0]) // 2
         text_y = y1 + (box_h + text_size[1]) // 2
-        cv2.putText(frame, letter, (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX, 1.3, (0,0,0), 2)
+        cv2.putText(frame, letter, (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX, 1.3 * sf, (0,0,0), 2)
         coords.append([letter, x1, y1, x2, y2])
     # Third row: Space, Backspace, Enter
     special_w = int(2.5 * box_w)
@@ -69,30 +69,30 @@ while True:
     space_x2 = space_x1 + special_w
     space_y2 = space_y1 + box_h
     cv2.rectangle(frame, (space_x1, space_y1), (space_x2, space_y2), (128,128,128), 2)
-    text_size = cv2.getTextSize("Space", cv2.FONT_HERSHEY_SIMPLEX, 1.3, 2)[0]
+    text_size = cv2.getTextSize("Space", cv2.FONT_HERSHEY_SIMPLEX, 1.3 * sf, 2)[0]
     text_x = space_x1 + (special_w - text_size[0]) // 2
     text_y = space_y1 + (box_h + text_size[1]) // 2
-    cv2.putText(frame, "Space", (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX, 1.3, (0,0,0), 2)
+    cv2.putText(frame, "Space", (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX, 1.3 * sf, (0,0,0), 2)
     coords.append(["Space", space_x1, space_y1, space_x2, space_y2])
     backspace_x1 = space_x2 + margin
     backspace_y1 = space_y1
     backspace_x2 = backspace_x1 + special_w
     backspace_y2 = backspace_y1 + box_h
     cv2.rectangle(frame, (backspace_x1, backspace_y1), (backspace_x2, backspace_y2), (128,128,128), 2)
-    text_size = cv2.getTextSize("Backspace", cv2.FONT_HERSHEY_SIMPLEX, 1.3, 2)[0]
+    text_size = cv2.getTextSize("Backspace", cv2.FONT_HERSHEY_SIMPLEX, 1.3 * sf, 2)[0]
     text_x = backspace_x1 + (special_w - text_size[0]) // 2
     text_y = backspace_y1 + (box_h + text_size[1]) // 2
-    cv2.putText(frame, "Backspace", (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX, 1.3, (0,0,0), 2)
+    cv2.putText(frame, "Backspace", (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX, 1.3 * sf, (0,0,0), 2)
     coords.append(["Backspace", backspace_x1, backspace_y1, backspace_x2, backspace_y2])
     enter_x1 = backspace_x2 + margin
     enter_y1 = space_y1
     enter_x2 = enter_x1 + special_w
     enter_y2 = enter_y1 + box_h
     cv2.rectangle(frame, (enter_x1, enter_y1), (enter_x2, enter_y2), (128,128,128), 2)
-    text_size = cv2.getTextSize("Enter", cv2.FONT_HERSHEY_SIMPLEX, 1.3, 2)[0]
+    text_size = cv2.getTextSize("Enter", cv2.FONT_HERSHEY_SIMPLEX, 1.3 * sf, 2)[0]
     text_x = enter_x1 + (special_w - text_size[0]) // 2
     text_y = enter_y1 + (box_h + text_size[1]) // 2
-    cv2.putText(frame, "Enter", (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX, 1.3, (0,0,0), 2)
+    cv2.putText(frame, "Enter", (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX, 1.3 * sf, (0,0,0), 2)
     coords.append(["Enter", enter_x1, enter_y1, enter_x2, enter_y2])
 
     #===============================================================================================================================
@@ -105,7 +105,7 @@ while True:
 
             llm = []
             for id, lm in enumerate(handlms.landmark):
-                cx, cy = int(lm.x * w), int(lm.y * h)
+                cx, cy = int(lm.x * w2), int(lm.y * h2)
                 llm.append([id, cx, cy])
 
             if len(llm) > 8:  # Ensure landmarks exist
@@ -127,7 +127,7 @@ while True:
                         elif not typed and time.time() - enter_time >= 1:
                             if letter == "Space":
                                 typed_txt += " "
-                                keyboard.press(Key.space).lower()
+                                keyboard.press(Key.space)
                                 keyboard.release(Key.space)
                             elif letter == "Backspace":
                                 typed_txt = typed_txt[:-1]
