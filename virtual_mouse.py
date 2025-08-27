@@ -9,7 +9,7 @@ mouse = Controller()
 screen_w, screen_h = pyautogui.size()
 
 # Capture webcam
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 
 # Mediapipe hands
 mphands = mp.solutions.hands
@@ -107,6 +107,8 @@ while True:
             else:
                 scrolling_down = False
 
+    resize_factor = 0.67  # Change this value for desired window size
+    frame = cv2.resize(frame, (int(w * resize_factor), int(h * resize_factor)))
     cv2.imshow("Hand Mouse Control", frame)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
